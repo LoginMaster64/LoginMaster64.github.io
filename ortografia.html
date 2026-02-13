@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palabras Correctas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(135deg, #A8EDEA 0%, #FED6E3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .contenedor {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .encabezado {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .encabezado h1 {
+            font-size: 50px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+        }
+
+        .boton-volver {
+            background: white;
+            color: #FED6E3;
+            border: 2px solid white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .boton-volver:hover {
+            transform: scale(1.05);
+        }
+
+        .ejercicio {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .ejercicio h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .instruccion {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .imagen-palabra {
+            font-size: 80px;
+            margin: 20px 0;
+        }
+
+        .palabra-pronunciada {
+            font-size: 24px;
+            color: #A8EDEA;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            border-left: 5px solid #A8EDEA;
+        }
+
+        .boton-pronunciar {
+            background: linear-gradient(135deg, #A8EDEA 0%, #FED6E3 100%);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+
+        .boton-pronunciar:hover {
+            transform: scale(1.05);
+        }
+
+        .opciones-palabra {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .boton-palabra {
+            background: linear-gradient(135deg, #FED6E3 0%, #A8EDEA 100%);
+            border: 3px solid #A8EDEA;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #333;
+            min-width: 120px;
+        }
+
+        .boton-palabra:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .boton-palabra.correcto {
+            background: linear-gradient(135deg, #90EE90 0%, #00C896 100%);
+            color: white;
+            animation: pulse 0.6s ease;
+        }
+
+        .boton-palabra.incorrecto {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF4444 100%);
+            color: white;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .mensaje {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            min-height: 40px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .mensaje.correcto {
+            color: #00C896;
+        }
+
+        .mensaje.incorrecto {
+            color: #FF4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .boton-siguiente {
+            background: linear-gradient(135deg, #A8EDEA 0%, #FED6E3 100%);
+            color: #333;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .boton-siguiente:hover {
+            transform: scale(1.05);
+        }
+
+        .boton-siguiente.mostrar {
+            display: block;
+        }
+
+        .puntuacion {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #A8EDEA;
+            font-size: 18px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nivel {
+            display: inline-block;
+            background: #A8EDEA;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .barra-superior {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #A8EDEA 0%, #FED6E3 100%);
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .boton-musica {
+            background: white;
+            color: #A8EDEA;
+            border: 2px solid #A8EDEA;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .boton-musica:hover {
+            background: #A8EDEA;
+            color: white;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio de fondo -->
+    <audio id="bgAudio" autoplay loop style="display: none;">
+        <source src="audio/Toy Shop (cute vlog _ bossa nova music) [SA9AKYvxX9s].mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="puntuacion">
+        ✅ Correctas: <span id="correctas">0</span>
+    </div>
+
+    <div class="contenedor">
+        <div class="barra-superior">
+            <button class="boton-volver" onclick="volverAlMenu()">← Volver al Menú</button>
+            <button id="btnPlayAudio" class="boton-musica">▶</button>
+        </div>
+
+        <div class="encabezado">
+            <h1>✏️ Palabras Correctas ✏️</h1>
+            <p>Escucha y selecciona la palabra correcta</p>
+            <div class="nivel" id="nivel">Nivel 1</div>
+        </div>
+
+        <div class="ejercicio" id="ejercicio">
+            <h2 id="titulo">Ejercicio:</h2>
+            <div class="imagen-palabra" id="emoji"></div>
+            <button class="boton-pronunciar" onclick="pronunciarPalabra()">🔊 Escuchar Palabra</button>
+            <div class="palabra-pronunciada" id="palabra-pista"></div>
+            <div class="opciones-palabra" id="opciones"></div>
+            <div class="mensaje" id="mensaje"></div>
+            <button class="boton-siguiente" id="btnSiguiente" onclick="siguienteProblem()">Siguiente ➜</button>
+        </div>
+    </div>
+
+    <script>
+        let correctas = 0;
+        let problemasActual = 0;
+        let problemaRespondido = false;
+
+        const ejercicios = [
+            { palabra: 'GATO', emoji: '🐱', pista: 'G-A-T-O', opciones: ['GATO', 'PATO', 'RATO'] },
+            { palabra: 'PERRO', emoji: '🐶', pista: 'P-E-R-R-O', opciones: ['GATO', 'PERRO', 'PATO'] },
+            { palabra: 'CASA', emoji: '🏠', pista: 'C-A-S-A', opciones: ['CASA', 'RAMA', 'MESA'] },
+            { palabra: 'ARBOL', emoji: '🌳', pista: 'Á-R-B-O-L', opciones: ['ARBOL', 'ARBOR', 'ARBAL'] },
+            { palabra: 'MAMA', emoji: '👩', pista: 'M-A-M-A', opciones: ['NANA', 'MAMA', 'PAPA'] },
+            { palabra: 'PAPA', emoji: '👨', pista: 'P-A-P-A', opciones: ['TATA', 'PAPA', 'PUPA'] },
+            { palabra: 'AGUA', emoji: '💧', pista: 'A-G-U-A', opciones: ['AGUA', 'GAUA', 'AGAU'] },
+            { palabra: 'PAN', emoji: '🍞', pista: 'P-A-N', opciones: ['PAN', 'PAM', 'PAP'] },
+            { palabra: 'SOL', emoji: '☀️', pista: 'S-O-L', opciones: ['SOL', 'SON', 'SOD'] },
+            { palabra: 'LUNA', emoji: '🌙', pista: 'L-U-N-A', opciones: ['LUNA', 'LANA', 'LUMA'] },
+        ];
+
+        function pronunciarPalabra() {
+            const ejercicio = ejercicios[problemasActual % ejercicios.length];
+            const palabraAudio = ejercicio.palabra.toLowerCase();
+            
+            // Mostrar pista
+            document.getElementById('palabra-pista').textContent = `🎤 Escuchas: ${ejercicio.pista}`;
+
+            // Crear audio con Web Speech API
+            const utterance = new SpeechSynthesisUtterance(palabraAudio);
+            utterance.lang = 'es-ES';
+            utterance.rate = 0.8; // Velocidad lenta para niños
+            utterance.pitch = 1.3; // Tonalidad más alta
+            speechSynthesis.speak(utterance);
+        }
+        function guardarPuntuacion() {
+            const estudianteActual = localStorage.getItem('estudianteActual');
+            if (!estudianteActual) return;
+
+            const datosStr = localStorage.getItem('datosEstudiante_' + estudianteActual);
+            const datos = JSON.parse(datosStr);
+            datos.ortografia = parteActual; // O la métrica que uses
+            localStorage.setItem('datosEstudiante_' + estudianteActual, JSON.stringify(datos));
+        }
+        function generarOpciones(respuestaCorrecta, opciones) {
+            // Mezclar opciones
+            return opciones.sort(() => Math.random() - 0.5);
+        }
+
+        function mostrarEjercicio() {
+            const ejercicio = ejercicios[problemasActual % ejercicios.length];
+
+            document.getElementById('titulo').textContent = `Ejercicio ${problemasActual + 1}`;
+            document.getElementById('emoji').textContent = ejercicio.emoji;
+            document.getElementById('palabra-pista').textContent = '';
+
+            // Mostrar opciones de palabra
+            const opciones = generarOpciones(ejercicio.palabra, ejercicio.opciones);
+            let htmlOpciones = '';
+            opciones.forEach(opcion => {
+                htmlOpciones += `<button class="boton-palabra" onclick="verificarRespuesta('${opcion}', '${ejercicio.palabra}')">
+                    ${opcion}
+                </button>`;
+            });
+            document.getElementById('opciones').innerHTML = htmlOpciones;
+
+            document.getElementById('mensaje').textContent = '';
+            document.getElementById('btnSiguiente').classList.remove('mostrar');
+            problemaRespondido = false;
+        }
+
+        function verificarRespuesta(respuestaSeleccionada, respuestaCorrecta) {
+            if (problemaRespondido) return;
+
+            problemaRespondido = true;
+            const botones = document.querySelectorAll('.boton-palabra');
+
+            if (respuestaSeleccionada === respuestaCorrecta) {
+                document.getElementById('mensaje').textContent = '¡¡¡ CORRECTO !!! ¡Excelente lectura!';
+                document.getElementById('mensaje').classList.remove('incorrecto');
+                document.getElementById('mensaje').classList.add('correcto');
+                correctas++;
+                document.getElementById('correctas').textContent = correctas;
+                guardarPuntuacionOrtografia();
+
+                botones.forEach(btn => {
+                    if (btn.textContent.trim() === respuestaCorrecta) {
+                        btn.classList.add('correcto');
+                    }
+                    btn.disabled = true;
+                });
+
+            } else {
+                document.getElementById('mensaje').textContent = '❌ Intenta de nuevo...';
+                document.getElementById('mensaje').classList.remove('correcto');
+                document.getElementById('mensaje').classList.add('incorrecto');
+
+                botones.forEach(btn => {
+                    if (btn.textContent.trim() === respuestaSeleccionada) {
+                        btn.classList.add('incorrecto');
+                        setTimeout(() => {
+                            btn.classList.remove('incorrecto');
+                        }, 500);
+                    }
+                });
+                problemaRespondido = false;
+                return;
+            }
+
+            document.getElementById('btnSiguiente').classList.add('mostrar');
+        }
+
+        function guardarPuntuacionOrtografia() {
+            const estudianteActual = localStorage.getItem('estudianteActual');
+            if (!estudianteActual) return;
+
+            const datosStr = localStorage.getItem('datosEstudiante_' + estudianteActual);
+            const datos = JSON.parse(datosStr);
+            datos.ortografia = correctas;
+            localStorage.setItem('datosEstudiante_' + estudianteActual, JSON.stringify(datos));
+        }
+
+        function siguienteProblem() {
+            problemasActual++;
+            mostrarEjercicio();
+        }
+
+        function volverAlMenu() {
+            window.location.href = 'index.html';
+        }
+
+        // ===== CONTROL DE MÚSICA DE FONDO =====
+        let bgAudioPausedByNarration = false;
+
+        window.addEventListener('load', function() {
+            const audioEl = document.getElementById('bgAudio');
+            const btnPlayAudio = document.getElementById('btnPlayAudio');
+
+            // Controlar play/pause del botón
+            btnPlayAudio.addEventListener('click', function() {
+                if (audioEl.paused) {
+                    audioEl.play();
+                    btnPlayAudio.textContent = '⏸';
+                } else {
+                    audioEl.pause();
+                    btnPlayAudio.textContent = '▶';
+                }
+            });
+
+            // Actualizar botón cuando la música cambie de estado
+            audioEl.addEventListener('play', function() {
+                btnPlayAudio.textContent = '⏸';
+            });
+
+            audioEl.addEventListener('pause', function() {
+                if (!bgAudioPausedByNarration) {
+                    btnPlayAudio.textContent = '▶';
+                }
+            });
+        });
+
+        // Pausar música cuando comienza la pronunciación
+        function pausarMusicaCuandoSonidoComienza() {
+            const audioEl = document.getElementById('bgAudio');
+            if (!audioEl.paused) {
+                bgAudioPausedByNarration = true;
+                audioEl.pause();
+            }
+        }
+
+        // Reanudar música cuando termina la pronunciación
+        function reanudarMusicaCuandoSonidoTermina() {
+            const audioEl = document.getElementById('bgAudio');
+            if (bgAudioPausedByNarration) {
+                bgAudioPausedByNarration = false;
+                audioEl.play();
+            }
+        }
+
+        // Wrapper para pronunciarPalabra original
+        const pronunciarPalabraOriginal = pronunciarPalabra;
+        pronunciarPalabra = function() {
+            pausarMusicaCuandoSonidoComienza();
+            
+            const ejercicio = ejercicios[problemasActual % ejercicios.length];
+            const palabraAudio = ejercicio.palabra.toLowerCase();
+            
+            // Mostrar pista
+            document.getElementById('palabra-pista').textContent = `🎤 Escuchas: ${ejercicio.pista}`;
+
+            // Crear audio con Web Speech API
+            const utterance = new SpeechSynthesisUtterance(palabraAudio);
+            utterance.lang = 'es-ES';
+            utterance.rate = 0.8; // Velocidad lenta para niños
+            utterance.pitch = 1.3; // Tonalidad más alta
+            
+            // Reanudar música cuando termine el sonido
+            utterance.onend = function() {
+                reanudarMusicaCuandoSonidoTermina();
+            };
+            
+            utterance.onerror = function() {
+                reanudarMusicaCuandoSonidoTermina();
+            };
+            
+            speechSynthesis.speak(utterance);
+        };
+
+        // Iniciar
+        mostrarEjercicio();
+    </script>
+</body>
+</html>

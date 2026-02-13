@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprendo Jugando - Educación Primaria</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 400% 400%;
+            animation: gradiente 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Estilos para la pantalla de login */
+        .pantalla-login {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 2000;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 400% 400%;
+            animation: gradiente 15s ease infinite;
+        }
+
+        .pantalla-login.oculta {
+            display: none;
+        }
+
+        .caja-login {
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: slideDown 0.6s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .caja-login h1 {
+            color: #667eea;
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .caja-login p {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .campo-nombre {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            font-family: 'Comic Sans MS', cursive;
+            text-align: center;
+        }
+
+        .campo-nombre:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 10px rgba(118, 75, 162, 0.3);
+        }
+
+        .boton-iniciar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', cursive;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .boton-iniciar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .boton-continuar {
+            background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', cursive;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .boton-continuar:hover {
+            transform: scale(1.05);
+        }
+
+        .boton-continuar.mostrar {
+            display: inline-block;
+        }
+
+        .info-estudiante {
+            background: #f0f0f0;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .info-estudiante.mostrar {
+            display: block;
+        }
+
+        .nombre-estudiante {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .boton-cambiar {
+            background: #FFB6B6;
+            color: #FF4444;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', cursive;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .boton-cambiar:hover {
+            transform: scale(1.05);
+        }
+
+        /* Barra superior con datos del estudiante */
+        .barra-estudiante {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: none;
+            height: 70px;
+        }
+
+        .barra-estudiante.mostrar {
+            display: flex;
+        }
+
+        .info-barra {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .item-barra {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .item-barra .etiqueta {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .item-barra .valor {
+            font-size: 18px;
+            color: #667eea;
+        }
+
+        .boton-finalizar {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF4444 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', cursive;
+            transition: all 0.3s ease;
+        }
+
+        .boton-finalizar:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modal de reporte */
+        .modal-reporte {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-reporte.mostrar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .contenido-reporte {
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            width: 95%;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .contenido-reporte h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+            text-align: center;
+        }
+
+        .contenido-reporte .nombre-reporte {
+            text-align: center;
+            font-size: 24px;
+            color: #764ba2;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .tabla-puntuaciones {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .tabla-puntuaciones th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            border-radius: 10px;
+        }
+
+        .tabla-puntuaciones td {
+            padding: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tabla-puntuaciones tr:last-child td {
+            border-bottom: none;
+        }
+
+        .tabla-puntuaciones tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .seccion-nombre {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .puntuacion-valor {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .total-fila {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+        }
+
+        .total-fila td {
+            color: white;
+            border: none;
+        }
+
+        .mensaje-felicidad {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #FFE66D;
+            border-radius: 10px;
+            color: #333;
+        }
+
+        .botones-reporte {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .boton-reporte {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', cursive;
+            transition: all 0.3s ease;
+        }
+
+        .boton-reporte:hover {
+            transform: scale(1.05);
+        }
+
+        .boton-reporte.secundario {
+            background: #FFB6B6;
+            color: #FF4444;
+        }
+
+        .contenedor-menu {
+            margin-top: 80px;
+        }
+
+        /* Estilos para gráficos */
+        .grafico-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .grafico-titulo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .barra-grafico {
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .etiqueta-grafico {
+            min-width: 120px;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .relleno-grafico {
+            flex: 1;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 30px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .numero-grafico {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .historial-sesiones {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .historial-titulo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .item-historial {
+            background: linear-gradient(135deg, #f9f9f9 0%, #f5f5f5 100%);
+            border-left: 5px solid #667eea;
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .item-historial:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-historial {
+            flex: 1;
+        }
+
+        .fecha-historial {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .puntos-historial {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .detalle-sesion {
+            display: flex;
+            gap: 20px;
+            padding: 10px 0;
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+            flex-wrap: wrap;
+        }
+
+        .detalle-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background: rgba(102, 126, 234, 0.08);
+            border-radius: 5px;
+        }
+
+        .resumen-rapido {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .item-resumen {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .item-resumen .numero {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .item-resumen .etiqueta {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .boton-comparar {
+            background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', cursive;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .boton-comparar:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modal de comparación */
+        .modal-comparacion {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            overflow-y: auto;
+        }
+
+        .modal-comparacion.mostrar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .contenido-comparacion {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            width: 95%;
+            max-width: 800px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .contenido-comparacion h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .tabla-comparacion {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .tabla-comparacion th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .tabla-comparacion td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .tabla-comparacion tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .estudiante-ganador {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
+            font-weight: bold;
+            color: white;
+        }
+
+        .boton-cerrar-modal {
+            background: #FFB6B6;
+            color: #FF4444;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', cursive;
+            margin-top: 20px;
+        }
+
+        .boton-cerrar-modal:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes gradiente {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .titulo-principal {
+            text-align: center;
+            margin-top: 80px;
+            margin-bottom: 60px;
+            padding: 20px;
+            animation: bounce 2s infinite;
+            z-index: 10;
+        }
+
+        .titulo-principal h1 {
+            font-size: 60px;
+            color: #fff;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), 
+                         -2px -2px 4px rgba(255, 255, 255, 0.5);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .titulo-principal p {
+            font-size: 24px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .contenedor-menu {
+            display: flex;
+            gap: 100px;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            max-width: 1400px;
+            margin: 0 auto;
+            margin-top: 40px;
+            padding: 20px;
+        }
+
+        .columna {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 300px;
+        }
+
+        .boton-opcion {
+            width: 280px;
+            height: 120px;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 15px;
+            font-family: 'Comic Sans MS', cursive;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .boton-opcion::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
+            z-index: 1;
+        }
+
+        .boton-opcion:hover::before {
+            left: 100%;
+        }
+
+        .boton-opcion span {
+            position: relative;
+            z-index: 2;
+        }
+
+        .boton-opcion:hover {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .boton-opcion:active {
+            transform: scale(0.95);
+        }
+
+        /* Colores para cada botón */
+        .boton-cuentos {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E72 100%);
+        }
+
+        .boton-sumas {
+            background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+        }
+
+        .boton-restas {
+            background: linear-gradient(135deg, #FFE66D 0%, #95E1D3 100%);
+            color: #333;
+        }
+
+        .boton-ortografia {
+            background: linear-gradient(135deg, #A8EDEA 0%, #FED6E3 100%);
+            color: #333;
+        }
+
+        .boton-matematicas {
+            background: linear-gradient(135deg, #9B59B6 0%, #E74C3C 100%);
+        }
+
+        .boton-premio {
+            background: linear-gradient(135deg, #F39C12 0%, #E67E22 100%);
+        }
+
+        .boton-opcion .emoji {
+            font-size: 40px;
+            margin-bottom: 5px;
+        }
+
+        .boton-opcion .texto {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        @keyframes gradiente {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .titulo-principal {
+            text-align: center;
+            margin-top: 80px;
+            margin-bottom: 60px;
+            padding: 20px;
+            animation: bounce 2s infinite;
+            z-index: 10;
+        }
+
+        .titulo-principal h1 {
+            font-size: 60px;
+            color: #fff;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), 
+                         -2px -2px 4px rgba(255, 255, 255, 0.5);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .titulo-principal p {
+            font-size: 24px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Animación ripple al hacer click */
+        @keyframes ripple {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                width: 300px;
+                height: 300px;
+                opacity: 0;
+            }
+        }
+
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: ripple 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        /* Estilos responsive */
+        @media (max-width: 1024px) {
+            .contenedor-menu {
+                gap: 60px;
+            }
+            
+            .titulo-principal h1 {
+                font-size: 45px;
+            }
+        }
+
+        /* Estilos para el Carousel */
+        .carousel-container {
+            width: 100%;
+            height: 500px;
+            margin: 40px 0 0 0;
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .carousel-wrapper {
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            height: 100%;
+            width: 100%;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 60px;
+            padding-left: 100px;
+            text-align: left;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: slideIn 0.8s ease forwards;
+            position: relative;
+        }
+
+        .carousel-slide::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 40%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .carousel-slide.slide-cuentos {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E72 100%);
+        }
+
+        .carousel-slide.slide-sumas {
+            background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+        }
+
+        .carousel-slide.slide-restas {
+            background: linear-gradient(135deg, #FFE66D 0%, #95E1D3 100%);
+        }
+
+        .carousel-slide.slide-ortografia {
+            background: linear-gradient(135deg, #A8EDEA 0%, #FED6E3 100%);
+        }
+
+        .carousel-slide.slide-matematicas {
+            background: linear-gradient(135deg, #9B59B6 0%, #E74C3C 100%);
+        }
+
+        .carousel-slide.slide-premio {
+            background: linear-gradient(135deg, #F39C12 0%, #E67E22 100%);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0.5;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .carousel-content {
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+            max-width: 600px;
+        }
+
+        .carousel-emoji {
+            font-size: 100px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+            display: inline-block;
+        }
+
+        .carousel-titulo {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .carousel-descripcion {
+            font-size: 20px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            max-width: 500px;
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 15px;
+            position: absolute;
+            bottom: 30px;
+            left: 100px;
+            z-index: 20;
+        }
+
+        .carousel-boton {
+            background: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .carousel-boton:hover {
+            transform: scale(1.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .carousel-boton:active {
+            transform: scale(0.95);
+        }
+
+        .carousel-indicadores {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-start;
+            position: absolute;
+            bottom: 30px;
+            left: 180px;
+            z-index: 20;
+        }
+
+        .indicador {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+        }
+
+        .indicador:hover {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .indicador.activo {
+            background: white;
+            transform: scale(1.3);
+        }
+
+        .carousel-instrucciones {
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            .carousel-slide {
+                padding-left: 50px;
+                padding: 40px 50px;
+            }
+
+            .carousel-controls {
+                left: 50px;
+            }
+
+            .carousel-indicadores {
+                left: 130px;
+            }
+
+            .carousel-titulo {
+                font-size: 36px;
+            }
+
+            .carousel-descripcion {
+                font-size: 16px;
+            }
+
+            .carousel-emoji {
+                font-size: 70px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .carousel-container {
+                height: 400px;
+            }
+
+            .carousel-slide {
+                padding-left: 30px;
+                padding: 30px;
+                align-items: center;
+                text-align: center;
+            }
+
+            .carousel-controls {
+                left: 50%;
+                transform: translateX(-50%);
+                justify-content: center;
+            }
+
+            .carousel-indicadores {
+                left: 50%;
+                transform: translateX(-50%);
+                justify-content: center;
+            }
+
+            .carousel-titulo {
+                font-size: 28px;
+            }
+
+            .carousel-descripcion {
+                font-size: 14px;
+            }
+
+            .carousel-emoji {
+                font-size: 50px;
+            }
+
+            .carousel-content {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de Login -->
+    <div class="pantalla-login" id="pantallaLogin">
+        <div class="caja-login">
+            <h1>👋 ¡Bienvenido!</h1>
+            <p>¿Cuál es tu nombre?</p>
+            <input type="text" id="inputNombre" class="campo-nombre" placeholder="Escribe tu nombre aquí" maxlength="30">
+            <button class="boton-iniciar" onclick="iniciarSesion()">Comenzar a Aprender 📚</button>
+            <div class="info-estudiante" id="infoEstudiante">
+                <div class="nombre-estudiante" id="nombreActual"></div>
+                <button class="boton-cambiar" onclick="cambiarEstudiante()">Cambiar Estudiante</button>
+            </div>
+            <button class="boton-continuar" id="btnContinuar" onclick="continuarConEstudiante()">Continuar →</button>
+        </div>
+    </div>
+
+    <!-- Barra de estudiante -->
+    <div class="barra-estudiante" id="barraEstudiante">
+        <div class="info-barra">
+            <div class="item-barra">
+                <div class="etiqueta">ESTUDIANTE</div>
+                <div class="valor" id="nombreBarra">-</div>
+            </div>
+            <button id="btnPlayAudio" style="background:transparent; border:none; font-size:24px; cursor:pointer; padding:0 10px;" title="Play/Pause">▶</button>
+        </div>
+        <button class="boton-finalizar" onclick="mostrarReporte()">Finalizar Sesión 🏁</button>
+    </div>
+
+    <!-- Audio de fondo en loop -->
+    <audio id="bgAudio" autoplay loop style="display:none;">
+        <source src="audio/Toy Shop (cute vlog _ bossa nova music) [SA9AKYvxX9s].mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Modal de Reporte -->
+    <div class="modal-reporte" id="modalReporte">
+        <div class="contenido-reporte">
+            <h2>📊 REPORTE FINAL</h2>
+            <div class="nombre-reporte" id="nombreReporte"></div>
+            <div class="mensaje-felicidad" id="mensajeFelicidad"></div>
+            <table class="tabla-puntuaciones" id="tablaPuntuaciones"></table>
+            <div class="botones-reporte">
+                <button class="boton-reporte" onclick="volverAlLogin()">🏠 Volver al Inicio</button>
+                <button class="boton-reporte secundario" onclick="descargarReporte()">📥 Descargar Reporte</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Comparación -->
+    <div class="modal-comparacion" id="modalComparacion">
+        <div class="contenido-comparacion">
+            <h2>📊 COMPARACIÓN DE ESTUDIANTES</h2>
+            <table class="tabla-comparacion" id="tablaComparacion"></table>
+            <button class="boton-cerrar-modal" onclick="cerrarComparacion()">Cerrar</button>
+        </div>
+    </div>
+
+    <div class="titulo-principal">
+        <h1>🎓 APRENDO JUGANDO 🎓</h1>
+        <p>Un mundo de diversión y aprendizaje</p>
+    </div>
+
+    <!-- CAROUSEL DE PREVISUALIZACIÓN -->
+    <div class="carousel-container">
+        <div class="carousel-wrapper">
+            <div class="carousel-track" id="carouselTrack">
+                <!-- Diapositiva 1: Cuentos -->
+                <div class="carousel-slide slide-cuentos">
+                    <div class="carousel-content">
+                        <div class="carousel-emoji">📖</div>
+                        <div class="carousel-titulo">CUENTOS MÁGICOS</div>
+                        <div class="carousel-descripcion">
+                            Sumérgete en historias fantásticas llenas de aventuras y personajes increíbles. Aprende mientras disfrutas de emocionantes relatos.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diapositiva 2: Sumas -->
+                <div class="carousel-slide slide-sumas">
+                    <div class="carousel-content">
+                        <div class="carousel-emoji">➕</div>
+                        <div class="carousel-titulo">SUMAS DIVERTIDAS</div>
+                        <div class="carousel-descripcion">
+                            Practica las sumas de forma visual y divertida. Usa emojis coloridos para aprender matemáticas de manera lúdica.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diapositiva 3: Restas -->
+                <div class="carousel-slide slide-restas">
+                    <div class="carousel-content">
+                        <div class="carousel-emoji">➖</div>
+                        <div class="carousel-titulo">RESTAS FÁCILES</div>
+                        <div class="carousel-descripcion">
+                            Domina las restas con ejercicios visuales interactivos. ¡Quitando objetos aprenderás a restar de forma divertida!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diapositiva 4: Ortografía -->
+                <div class="carousel-slide slide-ortografia">
+                    <div class="carousel-content">
+                        <div class="carousel-emoji">✏️</div>
+                        <div class="carousel-titulo">PALABRAS CORRECTAS</div>
+                        <div class="carousel-descripcion">
+                            Mejora tu ortografía aprendiendo palabras nuevas. Practica la pronunciación correcta con ejercicios interactivos.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diapositiva 5: Matemáticas -->
+                <div class="carousel-slide slide-matematicas">
+                    <div class="carousel-content">
+                        <div class="carousel-emoji">🔢</div>
+                        <div class="carousel-titulo">MATEMÁTICAS BÁSICAS</div>
+                        <div class="carousel-descripcion">
+                            Explora juegos matemáticos variados: contar, números, comparaciones y más. ¡Diviértete mientras aprendes!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diapositiva 6: Premios -->
+                <div class="carousel-slide slide-premio">
+                    <div class="carousel-content">
+                        <div class="carousel-emoji">🏆</div>
+                        <div class="carousel-titulo">MIS LOGROS</div>
+                        <div class="carousel-descripcion">
+                            Desbloquea premios y logros especiales mientras completas tus ejercicios. ¡Colecciona todas las medallas!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controles del Carousel (overlay) -->
+        <div class="carousel-controls">
+            <button class="carousel-boton" id="btnAnterior" onclick="pausarAutoCarousel(); carouselAnterior()">❮</button>
+            <div class="carousel-indicadores" id="indicadores"></div>
+            <button class="carousel-boton" id="btnSiguiente" onclick="pausarAutoCarousel(); carouselSiguiente()">❯</button>
+        </div>
+    </div>
+
+    <!-- MENSAJE PARA DESLIZAR HACIA ABAJO -->
+    <div style="text-align: center; margin: 30px 0; color: white; font-size: 18px; animation: bounce 2s infinite;">
+        ⬇️ Desplázate hacia abajo para ver todas las opciones ⬇️
+    </div>
+
+    <div class="titulo-principal">
+        <h1>🎮 ELIGE TU AVENTURA 🎮</h1>
+        <p>Selecciona una opción para comenzar</p>
+    </div>
+
+    <div class="contenedor-menu">
+        <!-- Columna Izquierda -->
+        <div class="columna">
+            <button class="boton-opcion boton-cuentos" onclick="irA('cuentos.html')">
+                <span class="emoji">📖</span>
+                <span class="texto">CUENTOS MÁGICOS</span>
+            </button>
+            <button class="boton-opcion boton-sumas" onclick="irA('sumas.html')">
+                <span class="emoji">➕</span>
+                <span class="texto">SUMAS DIVERTIDAS</span>
+            </button>
+            <button class="boton-opcion boton-ortografia" onclick="irA('ortografia.html')">
+                <span class="emoji">✏️</span>
+                <span class="texto">PALABRAS CORRECTAS</span>
+            </button>
+        </div>
+
+        <!-- Columna Derecha -->
+        <div class="columna">
+            <button class="boton-opcion boton-restas" onclick="irA('restas.html')">
+                <span class="emoji">➖</span>
+                <span class="texto">RESTAS FÁCILES</span>
+            </button>
+            <button class="boton-opcion boton-matematicas" onclick="irA('matematicas.html')">
+                <span class="emoji">🔢</span>
+                <span class="texto">MATEMÁTICAS BÁSICAS</span>
+            </button>
+            <button class="boton-opcion boton-premio" onclick="irA('premio.html')">
+                <span class="emoji">🏆</span>
+                <span class="texto">MIS LOGROS</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Verificar si hay estudiante en sesión
+        window.addEventListener('load', function() {
+            const estudianteActual = localStorage.getItem('estudianteActual');
+            const datosEstudiante = localStorage.getItem('datosEstudiante_' + estudianteActual);
+
+            if (estudianteActual && datosEstudiante) {
+                // Mostrar sesión activa
+                document.getElementById('pantallaLogin').classList.add('oculta');
+                document.getElementById('barraEstudiante').classList.add('mostrar');
+                document.getElementById('nombreBarra').textContent = estudianteActual;
+                document.body.style.opacity = '1';
+            } else {
+                // Mostrar pantalla de login
+                document.getElementById('pantallaLogin').classList.remove('oculta');
+                document.getElementById('barraEstudiante').classList.remove('mostrar');
+            }
+        });
+
+        function iniciarSesion() {
+            const nombre = document.getElementById('inputNombre').value.trim();
+            
+            if (nombre === '') {
+                alert('Por favor, ingresa tu nombre');
+                return;
+            }
+
+            // Guardar estudiante actual
+            localStorage.setItem('estudianteActual', nombre);
+
+            // Inicializar datos del estudiante si no existen
+            const datosExistentes = localStorage.getItem('datosEstudiante_' + nombre);
+            if (!datosExistentes) {
+                const datosInicial = {
+                    nombre: nombre,
+                    cuentos: 0,
+                    sumas: 0,
+                    restas: 0,
+                    ortografia: 0,
+                    matematicas: 0,
+                    puntos_totales: 0,
+                    premios_conseguidos: [],
+                    nivel: 1,
+                    fecha_inicio: new Date().toLocaleDateString('es-ES')
+                };
+                localStorage.setItem('datosEstudiante_' + nombre, JSON.stringify(datosInicial));
+            }
+
+            // Mostrar info de estudiante registrado
+            document.getElementById('nombreActual').textContent = '👤 ' + nombre;
+            document.getElementById('infoEstudiante').classList.add('mostrar');
+            document.getElementById('inputNombre').disabled = true;
+            document.getElementById('btnContinuar').classList.add('mostrar');
+        }
+
+        function continuarConEstudiante() {
+            document.getElementById('pantallaLogin').classList.add('oculta');
+            document.getElementById('barraEstudiante').classList.add('mostrar');
+            const nombre = localStorage.getItem('estudianteActual');
+            document.getElementById('nombreBarra').textContent = nombre;
+        }
+
+
+        function cambiarEstudiante() {
+            document.getElementById('inputNombre').value = '';
+            document.getElementById('inputNombre').disabled = false;
+            document.getElementById('infoEstudiante').classList.remove('mostrar');
+            document.getElementById('btnContinuar').classList.remove('mostrar');
+            localStorage.removeItem('estudianteActual');
+        }
+
+        function irA(pagina) {
+            const estudianteActual = localStorage.getItem('estudianteActual');
+            if (!estudianteActual) {
+                alert('Por favor, inicia sesión primero');
+                return;
+            }
+            document.body.style.opacity = '0.7';
+            setTimeout(() => {
+                window.location.href = pagina;
+            }, 300);
+        }
+
+        function mostrarReporte() {
+            const estudianteActual = localStorage.getItem('estudianteActual');
+            const datosStr = localStorage.getItem('datosEstudiante_' + estudianteActual);
+            const datos = JSON.parse(datosStr);
+
+            // Llenar datos en el reporte
+            document.getElementById('nombreReporte').textContent = '👤 ' + estudianteActual;
+
+            // Mensaje de felicidad según puntuación
+            const totalPuntos = datos.sumas + datos.restas + datos.ortografia + datos.matematicas;
+            let mensaje = '';
+            if (totalPuntos === 0) {
+                mensaje = '🌟 ¡Comienza tu aventura de aprendizaje!';
+            } else if (totalPuntos < 50) {
+                mensaje = '👍 ¡Buen comienzo! Sigue practicando.';
+            } else if (totalPuntos < 100) {
+                mensaje = '🎉 ¡Excelente desempeño!';
+            } else {
+                mensaje = '🏆 ¡ERES UN CAMPEÓN DEL APRENDIZAJE!';
+            }
+            document.getElementById('mensajeFelicidad').textContent = mensaje;
+
+            // Crear tabla de puntuaciones
+            let html = `
+                <tr>
+                    <th>📚 SECCIÓN</th>
+                    <th>⭐ PUNTUACIÓN</th>
+                </tr>
+                <tr>
+                    <td class="seccion-nombre">📖 Cuentos Mágicos</td>
+                    <td class="puntuacion-valor">${datos.cuentos}</td>
+                </tr>
+                <tr>
+                    <td class="seccion-nombre">➕ Sumas Divertidas</td>
+                    <td class="puntuacion-valor">${datos.sumas}</td>
+                </tr>
+                <tr>
+                    <td class="seccion-nombre">➖ Restas Fáciles</td>
+                    <td class="puntuacion-valor">${datos.restas}</td>
+                </tr>
+                <tr>
+                    <td class="seccion-nombre">✏️ Palabras Correctas</td>
+                    <td class="puntuacion-valor">${datos.ortografia}</td>
+                </tr>
+                <tr>
+                    <td class="seccion-nombre">🔢 Matemáticas Básicas</td>
+                    <td class="puntuacion-valor">${datos.matematicas}</td>
+                </tr>
+                <tr class="total-fila">
+                    <td>📊 TOTAL DE PUNTOS</td>
+                    <td class="puntuacion-valor">${totalPuntos}</td>
+                </tr>
+            `;
+
+            document.getElementById('tablaPuntuaciones').innerHTML = html;
+
+            // Agregar gráficos de progreso
+            let graficosHTML = `
+                <div class="grafico-container">
+                    <div class="grafico-titulo">📈 PROGRESO POR SECCIÓN</div>
+                    <div class="barra-grafico">
+                        <div class="etiqueta-grafico">📖 Cuentos</div>
+                        <div class="relleno-grafico" style="width: ${Math.min(datos.cuentos * 10, 100)}%">
+                            <div class="numero-grafico">${datos.cuentos}</div>
+                        </div>
+                    </div>
+                    <div class="barra-grafico">
+                        <div class="etiqueta-grafico">➕ Sumas</div>
+                        <div class="relleno-grafico" style="width: ${Math.min(datos.sumas * 5, 100)}%">
+                            <div class="numero-grafico">${datos.sumas}</div>
+                        </div>
+                    </div>
+                    <div class="barra-grafico">
+                        <div class="etiqueta-grafico">➖ Restas</div>
+                        <div class="relleno-grafico" style="width: ${Math.min(datos.restas * 5, 100)}%">
+                            <div class="numero-grafico">${datos.restas}</div>
+                        </div>
+                    </div>
+                    <div class="barra-grafico">
+                        <div class="etiqueta-grafico">✏️ Ortografía</div>
+                        <div class="relleno-grafico" style="width: ${Math.min(datos.ortografia * 5, 100)}%">
+                            <div class="numero-grafico">${datos.ortografia}</div>
+                        </div>
+                    </div>
+                    <div class="barra-grafico">
+                        <div class="etiqueta-grafico">🔢 Matemáticas</div>
+                        <div class="relleno-grafico" style="width: ${Math.min(datos.matematicas * 5, 100)}%">
+                            <div class="numero-grafico">${datos.matematicas}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Agregar historial de sesiones
+            let historialHTML = `
+                <div class="historial-sesiones">
+                    <div class="historial-titulo">📋 HISTORIAL DE SESIONES</div>
+            `;
+
+            const historialKey = 'historial_' + estudianteActual;
+            const historial = JSON.parse(localStorage.getItem(historialKey) || '[]');
+            
+            if (historial.length > 0) {
+                historial.slice().reverse().forEach((sesion, index) => {
+                    historialHTML += `
+                        <div class="item-historial">
+                            <div class="info-historial">
+                                <div class="fecha-historial">📅 ${sesion.fecha}</div>
+                                <div class="puntos-historial">🏆 ${sesion.total} puntos</div>
+                                <div class="detalle-sesion">
+                                    <div class="detalle-item">📖 ${sesion.cuentos || 0} cuentos</div>
+                                    <div class="detalle-item">➕ ${sesion.sumas || 0} sumas</div>
+                                    <div class="detalle-item">➖ ${sesion.restas || 0} restas</div>
+                                    <div class="detalle-item">✏️ ${sesion.ortografia || 0} palabras</div>
+                                    <div class="detalle-item">🔢 ${sesion.matematicas || 0} ejercicios</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                historialHTML += '<div style="text-align: center; padding: 20px; color: #999;">Esta es tu primera sesión 🌟</div>';
+            }
+
+            historialHTML += `
+                    <button class="boton-comparar" onclick="mostrarComparacion()">📊 Comparar con Otros Estudiantes</button>
+                </div>
+            `;
+
+            // Actualizar el modal con contenido completo
+            const reporteDiv = document.querySelector('.contenido-reporte');
+            reporteDiv.innerHTML = reporteDiv.innerHTML + graficosHTML + historialHTML;
+
+            document.getElementById('modalReporte').classList.add('mostrar');
+        }
+
+        function volverAlLogin() {
+            // Guardar sesión actual en historial antes de limpiar
+            const estudianteActual = localStorage.getItem('estudianteActual');
+            const datosStr = localStorage.getItem('datosEstudiante_' + estudianteActual);
+            const datos = JSON.parse(datosStr);
+
+            const totalPuntos = datos.sumas + datos.restas + datos.ortografia + datos.matematicas;
+            
+            if (totalPuntos > 0) {
+                const historialKey = 'historial_' + estudianteActual;
+                const historial = JSON.parse(localStorage.getItem(historialKey) || '[]');
+                
+                historial.push({
+                    fecha: new Date().toLocaleDateString('es-ES'),
+                    hora: new Date().toLocaleTimeString('es-ES'),
+                    sumas: datos.sumas,
+                    restas: datos.restas,
+                    ortografia: datos.ortografia,
+                    matematicas: datos.matematicas,
+                    total: totalPuntos
+                });
+
+                localStorage.setItem(historialKey, JSON.stringify(historial));
+            }
+
+            localStorage.removeItem('estudianteActual');
+            document.getElementById('modalReporte').classList.remove('mostrar');
+            document.getElementById('pantallaLogin').classList.remove('oculta');
+            document.getElementById('barraEstudiante').classList.remove('mostrar');
+            document.getElementById('inputNombre').value = '';
+            document.getElementById('inputNombre').disabled = false;
+            document.getElementById('infoEstudiante').classList.remove('mostrar');
+            document.getElementById('btnContinuar').classList.remove('mostrar');
+        }
+
+        function descargarReporte() {
+            const estudianteActual = localStorage.getItem('estudianteActual');
+            const datosStr = localStorage.getItem('datosEstudiante_' + estudianteActual);
+            const datos = JSON.parse(datosStr);
+
+            let contenido = `REPORTE DE APRENDIZAJE\n`;
+            contenido += `========================\n\n`;
+            contenido += `Estudiante: ${estudianteActual}\n`;
+            contenido += `Fecha: ${new Date().toLocaleDateString('es-ES')}\n\n`;
+            contenido += `PUNTUACIONES POR SECCIÓN:\n`;
+            contenido += `------------------------\n`;
+            contenido += `📖 Cuentos Mágicos: ${datos.cuentos}\n`;
+            contenido += `➕ Sumas Divertidas: ${datos.sumas}\n`;
+            contenido += `➖ Restas Fáciles: ${datos.restas}\n`;
+            contenido += `✏️ Palabras Correctas: ${datos.ortografia}\n`;
+            contenido += `🔢 Matemáticas Básicas: ${datos.matematicas}\n`;
+            contenido += `\n📊 TOTAL DE PUNTOS: ${datos.sumas + datos.restas + datos.ortografia + datos.matematicas}\n`;
+
+            const blob = new Blob([contenido], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Reporte_${estudianteActual}_${new Date().toLocaleDateString('es-MX').replace(/\//g, '-')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        // Función para crear efecto ripple al hacer click
+        document.querySelectorAll('.boton-opcion').forEach(boton => {
+            boton.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                
+                this.appendChild(ripple);
+            });
+        });
+
+        // Efecto al pasar el mouse sobre los botones
+        document.querySelectorAll('.boton-opcion').forEach(boton => {
+            boton.addEventListener('mouseenter', function() {
+                reproducirSonido();
+            });
+        });
+
+        // Función para reproducir sonido
+        function reproducirSonido() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                oscillator.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gain.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {
+                // El navegador no soporta Web Audio API
+            }
+        }
+
+        function mostrarComparacion() {
+            // Obtener todos los estudiantes registrados
+            const estudiantes = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('datosEstudiante_')) {
+                    const nombre = key.replace('datosEstudiante_', '');
+                    const datos = JSON.parse(localStorage.getItem(key));
+                    const totalPuntos = datos.sumas + datos.restas + datos.ortografia + datos.matematicas;
+                    estudiantes.push({
+                        nombre: nombre,
+                        sumas: datos.sumas,
+                        restas: datos.restas,
+                        ortografia: datos.ortografia,
+                        matematicas: datos.matematicas,
+                        total: totalPuntos
+                    });
+                }
+            }
+
+            // Ordenar por puntos totales
+            estudiantes.sort((a, b) => b.total - a.total);
+
+            // Crear tabla
+            let html = `
+                <tr>
+                    <th>👤 Estudiante</th>
+                    <th>➕ Sumas</th>
+                    <th>➖ Restas</th>
+                    <th>✏️ Ortografía</th>
+                    <th>🔢 Matemáticas</th>
+                    <th>📊 Total</th>
+                </tr>
+            `;
+
+            estudiantes.forEach((est, index) => {
+                const esGanador = index === 0 ? 'estudiante-ganador' : '';
+                const medalla = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '  ';
+                html += `
+                    <tr class="${esGanador}">
+                        <td>${medalla} ${est.nombre}</td>
+                        <td>${est.sumas}</td>
+                        <td>${est.restas}</td>
+                        <td>${est.ortografia}</td>
+                        <td>${est.matematicas}</td>
+                        <td><strong>${est.total}</strong></td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('tablaComparacion').innerHTML = html;
+            document.getElementById('modalComparacion').classList.add('mostrar');
+        }
+
+        function cerrarComparacion() {
+            document.getElementById('modalComparacion').classList.remove('mostrar');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalReporte');
+            if (event.target === modal) {
+                modal.classList.remove('mostrar');
+            }
+            const modalComp = document.getElementById('modalComparacion');
+            if (event.target === modalComp) {
+                modalComp.classList.remove('mostrar');
+            }
+        }
+
+        // ===== FUNCIONALIDAD DEL CAROUSEL =====
+        let indiceCarousel = 0;
+        const totalDiapositivas = 6;
+        let autoCarouselInterval = null;
+        let autoCarouselActivo = true;
+
+        function crearIndicadores() {
+            const contenedor = document.getElementById('indicadores');
+            for (let i = 0; i < totalDiapositivas; i++) {
+                const indicador = document.createElement('div');
+                indicador.className = 'indicador' + (i === 0 ? ' activo' : '');
+                indicador.onclick = () => {
+                    pausarAutoCarousel();
+                    irADiapositiva(i);
+                };
+                contenedor.appendChild(indicador);
+            }
+        }
+
+        function actualizarCarousel() {
+            const track = document.getElementById('carouselTrack');
+            const desplazamiento = -indiceCarousel * 100;
+            track.style.transform = `translateX(${desplazamiento}%)`;
+
+            // Actualizar indicadores
+            document.querySelectorAll('.indicador').forEach((ind, i) => {
+                ind.classList.toggle('activo', i === indiceCarousel);
+            });
+        }
+
+        function carouselAnterior() {
+            indiceCarousel = (indiceCarousel - 1 + totalDiapositivas) % totalDiapositivas;
+            actualizarCarousel();
+        }
+
+        function carouselSiguiente() {
+            indiceCarousel = (indiceCarousel + 1) % totalDiapositivas;
+            actualizarCarousel();
+        }
+
+        function irADiapositiva(index) {
+            indiceCarousel = index;
+            actualizarCarousel();
+        }
+
+        function iniciarAutoCarousel() {
+            if (autoCarouselActivo) {
+                autoCarouselInterval = setInterval(() => {
+                    carouselSiguiente();
+                }, 5000); // Cambiar cada 5 segundos
+            }
+        }
+
+        function pausarAutoCarousel() {
+            autoCarouselActivo = false;
+            clearInterval(autoCarouselInterval);
+            // Reanudar después de 10 segundos de inactividad
+            setTimeout(() => {
+                autoCarouselActivo = true;
+                iniciarAutoCarousel();
+            }, 10000);
+        }
+
+        // Inicializar carousel cuando carga la página
+        window.addEventListener('load', function() {
+            crearIndicadores();
+            iniciarAutoCarousel();
+            
+            // Control del botón de play/pause de audio
+            const audioEl = document.getElementById('bgAudio');
+            const btnPlay = document.getElementById('btnPlayAudio');
+            
+            if (btnPlay && audioEl) {
+                btnPlay.addEventListener('click', function() {
+                    if (audioEl.paused) {
+                        audioEl.play();
+                        btnPlay.textContent = '⏸';
+                    } else {
+                        audioEl.pause();
+                        btnPlay.textContent = '▶';
+                    }
+                });
+                
+                // Actualizar botón cuando el audio empieza/termina
+                audioEl.addEventListener('play', () => { btnPlay.textContent = '⏸'; });
+                audioEl.addEventListener('pause', () => { btnPlay.textContent = '▶'; });
+                
+                // Intentar reproducir automáticamente
+                audioEl.play().catch(() => {});
+            }
+            
+            // Permitir navegación con teclas de flecha
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowLeft') {
+                    pausarAutoCarousel();
+                    carouselAnterior();
+                }
+                if (e.key === 'ArrowRight') {
+                    pausarAutoCarousel();
+                    carouselSiguiente();
+                }
+            });
+
+            // Permitir deslizamiento táctil (para móviles)
+            let posicionInicial = 0;
+            const track = document.getElementById('carouselTrack');
+            
+            track.addEventListener('touchstart', (e) => {
+                posicionInicial = e.touches[0].clientX;
+                pausarAutoCarousel();
+            });
+
+            track.addEventListener('touchend', (e) => {
+                const posicionFinal = e.changedTouches[0].clientX;
+                const diferencia = posicionInicial - posicionFinal;
+
+                if (Math.abs(diferencia) > 50) {
+                    if (diferencia > 0) {
+                        carouselSiguiente();
+                    } else {
+                        carouselAnterior();
+                    }
+                }
+            });
+
+            // Pausar auto carousel cuando el usuario interactúa con los botones
+            document.getElementById('btnAnterior').addEventListener('mouseenter', pausarAutoCarousel);
+            document.getElementById('btnSiguiente').addEventListener('mouseenter', pausarAutoCarousel);
+
+            // El audio se reproduce automáticamente en loop
+        });
+    </script>
+</body>
+</html>

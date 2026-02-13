@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuentos Mágicos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .contenedor {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .encabezado {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .encabezado h1 {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .contenedor-cuentos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .tarjeta-cuento {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .tarjeta-cuento:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .tarjeta-cuento .emoji-grande {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .tarjeta-cuento h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .tarjeta-cuento p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .boton-leer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .boton-leer:hover {
+            transform: scale(1.05);
+        }
+
+        .boton-volver {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .boton-volver:hover {
+            transform: scale(1.05);
+            background: #667eea;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .contenido-modal {
+            background-color: white;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+
+        .modal p {
+            color: #333;
+            line-height: 1.8;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .emoji-modal {
+            font-size: 80px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .boton-cerrar {
+            background: #FF6B6B;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .boton-cerrar:hover {
+            background: #FF5252;
+            transform: scale(1.05);
+        }
+
+        .navegacion-cuento {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .boton-siguiente {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .boton-siguiente:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Estilos para narración */
+        .controles-narrador {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .boton-narrador {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .boton-narrador:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .boton-narrador:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .boton-narrador.reproduciendo {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF4444 100%);
+            animation: pulso 1s infinite;
+        }
+
+        @keyframes pulso {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+        }
+
+        .velocidad-narrador {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .velocidad-narrador label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .velocidad-narrador input[type="range"] {
+            width: 150px;
+            cursor: pointer;
+        }
+
+        .indicador-reproduccion {
+            text-align: center;
+            font-size: 14px;
+            color: #667eea;
+            font-weight: bold;
+            margin: 10px 0;
+            min-height: 20px;
+        }
+
+        .barra-superior {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .boton-musica {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .boton-musica:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio de fondo -->
+    <audio id="bgAudio" autoplay loop style="display: none;">
+        <source src="audio/Toy Shop (cute vlog _ bossa nova music) [SA9AKYvxX9s].mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="contenedor">
+        <div class="barra-superior">
+            <button class="boton-volver" onclick="volverAlMenu()">← Volver al Menú</button>
+            <button id="btnPlayAudio" class="boton-musica">▶</button>
+        </div>
+
+        <div class="encabezado">
+            <h1>📖 Cuentos Mágicos 📖</h1>
+            <p>Haz clic en un cuento para comenzar la aventura</p>
+        </div>
+
+        <div class="contenedor-cuentos">
+            <div class="tarjeta-cuento" onclick="abrirCuento(0)">
+                <div class="emoji-grande">🐒</div>
+                <h3>El Monito Curioso</h3>
+                <p>Un monito muy curioso que vive en la selva</p>
+                <button class="boton-leer">Leer Cuento</button>
+            </div>
+
+            <div class="tarjeta-cuento" onclick="abrirCuento(1)">
+                <div class="emoji-grande">🐢</div>
+                <h3>La Tortuga Lenta</h3>
+                <p>Una tortuga que aprende a no rendirse</p>
+                <button class="boton-leer">Leer Cuento</button>
+            </div>
+
+            <div class="tarjeta-cuento" onclick="abrirCuento(2)">
+                <div class="emoji-grande">🦁</div>
+                <h3>El León Amigable</h3>
+                <p>Un león que descubre la importancia de la amistad</p>
+                <button class="boton-leer">Leer Cuento</button>
+            </div>
+
+            <div class="tarjeta-cuento" onclick="abrirCuento(3)">
+                <div class="emoji-grande">🐰</div>
+                <h3>La Conejita Valiente</h3>
+                <p>Una pequeña conejita que es muy valiente</p>
+                <button class="boton-leer">Leer Cuento</button>
+            </div>
+
+            <div class="tarjeta-cuento" onclick="abrirCuento(4)">
+                <div class="emoji-grande">🦋</div>
+                <h3>La Mariposa Mágica</h3>
+                <p>Una mariposa que trae felicidad a todos</p>
+                <button class="boton-leer">Leer Cuento</button>
+            </div>
+
+            <div class="tarjeta-cuento" onclick="abrirCuento(5)">
+                <div class="emoji-grande">🐻</div>
+                <h3>El Oso Dormilón</h3>
+                <p>Un oso que aprende sobre las estaciones</p>
+                <button class="boton-leer">Leer Cuento</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="contenido-modal">
+            <div class="emoji-modal" id="emoji-cuento"></div>
+            <h2 id="titulo-cuento"></h2>
+            
+            <!-- Controles de Narración -->
+            <div class="controles-narrador">
+                <button class="boton-narrador" id="btnNarrador" onclick="toggleNarrador()">
+                    <span>🔊</span>
+                    <span id="textoBtn">Escuchar Cuento</span>
+                </button>
+                <button class="boton-narrador" onclick="detenerNarrador()">
+                    <span>⏹️</span>
+                    <span>Detener</span>
+                </button>
+            </div>
+
+            <div class="velocidad-narrador">
+                <label for="velocidadNarrador">🎚️ Velocidad:</label>
+                <input type="range" id="velocidadNarrador" min="0.5" max="2" step="0.1" value="0.8">
+                <span id="velocidadValor">0.8x</span>
+            </div>
+
+            <div class="indicador-reproduccion" id="indicadorReproduccion"></div>
+
+            <div id="contenido-cuento"></div>
+            <div class="navegacion-cuento">
+                <button id="btn-anterior" onclick="cuentoAnterior()" disabled>← Anterior</button>
+                <button id="btn-siguiente" onclick="cuentoSiguiente()" disabled>Siguiente →</button>
+            </div>
+            <button class="boton-cerrar" onclick="cerrarCuento()">Cerrar Cuento</button>
+        </div>
+    </div>
+
+    <script>
+        const cuentos = [
+            {
+                titulo: "El Monito Curioso",
+                emoji: "🐒",
+                partes: [
+                    "Había una vez un pequeño monito llamado Mino que vivía en lo alto de los árboles de la selva. Mino era muy curioso y le encantaba explorar todos los rincones del bosque.",
+                    "Un día, Mino encontró algo brillante colgado de una rama. Era una semilla dorada que brillaba como el sol. Mino nunca había visto nada parecido.",
+                    "Mino llevó la semilla a sus amigos y juntos decidieron plantarla para ver qué crecería. Cada día regaban la semilla con cuidado.",
+                    "¡Sorpresa! De la semilla creció un árbol mágico lleno de frutas deliciosas que servían para alimentar a todos los animales de la selva.",
+                    "Mino aprendió que la curiosidad y el trabajo en equipo pueden traer cosas maravillosas. Y colorín, colorado, este cuento ha terminado."
+                ]
+            },
+            {
+                titulo: "La Tortuga Lenta",
+                emoji: "🐢",
+                partes: [
+                    "Tina era una pequeña tortuga que vivía en un lago tranquilo. Todos los animales eran muy rápidos, pero Tina era muy, muy lenta.",
+                    "Un día, los otros animales organizaron una carrera y Tina quiso participar. Sus amigos le dijeron: 'Tina, no podrás ganar, ¡eres muy lenta!'",
+                    "Pero Tina no se rindió. Decidió intentarlo de todas formas. Mientras todos los demás animales salían disparados, Tina avanzaba lentamente, paso a paso.",
+                    "Cuando los otros animales se cansaron y se detuvieron para descansar, Tina seguía caminando lentamente pero sin parar.",
+                    "¡Tina fue la primera en llegar a la meta! Aprendió que la persistencia y la dedicación son más importantes que la velocidad. ¡Todos aplaudieron a Tina!"
+                ]
+            },
+            {
+                titulo: "El León Amigable",
+                emoji: "🦁",
+                partes: [
+                    "Leo era un león grande y fuerte, pero estaba muy solo. Aunque era el rey de la selva, los otros animales le tenían miedo.",
+                    "Un día, Leo vio a un pequeño conejo atrapado en una rama. A pesar de ser el rey, decidió ayudar al conejo en lugar de asustarlo.",
+                    "El conejo se dio cuenta de que Leo era amable. Pronto, otros animales también se acercaron y descubrieron que Leo tenía un corazón bondadoso.",
+                    "Leo y todos los animales se hicieron amigos. Juntos jugaban, compartían comida y se protegían los unos a los otros.",
+                    "Leo aprendió que la verdadera fuerza no está en ser poderoso, sino en ser amable. Y vivieron muy felices en la selva."
+                ]
+            },
+            {
+                titulo: "La Conejita Valiente",
+                emoji: "🐰",
+                partes: [
+                    "Rosa era una pequeña conejita de color blanco con nariz rosada. Aunque era pequeña, tenía un corazón muy valiente.",
+                    "Un día, Rosa vio que sus amigos estaban en peligro porque había una gran tormenta acercándose. Todos tenían miedo.",
+                    "Sin pensarlo dos veces, Rosa fue al lugar más seguro del bosque y guió a todos sus amigos hacia allá. No le importaba que fuera pequeña.",
+                    "Rosa saltaba y brincaba indicando el camino, animando a todos sus amigos a que la siguieran. Su valentía inspiró a los demás.",
+                    "Cuando la tormenta pasó, todos los animales estaban seguros gracias a Rosa. Aprendieron que el tamaño no importa, ¡la valentía sí!"
+                ]
+            },
+            {
+                titulo: "La Mariposa Mágica",
+                emoji: "🦋",
+                partes: [
+                    "Magdalena era una mariposa muy especial. Sus alas brillaban con colores de arcoíris y dondequiera que iba dejaba un rastro de magia.",
+                    "Un día, Magdalena notó que los animales del bosque estaban tristes y enfermos. Decidió volar de flor en flor para traer felicidad.",
+                    "Cada vez que Magdalena tocaba a un animal con su ala mágica, ese animal sonreía y sus colores se hacían más brillantes.",
+                    "Pronto, todo el bosque se transformó en un lugar lleno de alegría y colores. Los animales bailaban y cantaban juntos.",
+                    "Magdalena descubrió que su verdadera magia era la capacidad de traer felicidad a otros. ¡Ese es el mayor poder que existe!"
+                ]
+            },
+            {
+                titulo: "El Oso Dormilón",
+                emoji: "🐻",
+                partes: [
+                    "Bruno era un oso grande que amaba dormir. Dormía en primavera, verano, otoño e invierno. Sus amigos nunca entendían por qué dormía tanto.",
+                    "Un año, Bruno decidió quedarse despierto para aprender sobre las estaciones. En primavera vio las flores blooming y los animales jugando.",
+                    "En verano, Bruno disfrutó del calor y nadó en el río. En otoño, recogió frutas y nueces para guardarlas. En invierno, descansó seguro en su cueva.",
+                    "Bruno se dio cuenta de que cada estación tenía algo especial que ofrecer. Aprendió que la naturaleza es un círculo hermoso de cambios.",
+                    "Ahora Bruno disfruta de cada estación, aunque también le encanta dormir. Porque descubrió que hay un tiempo para todo: ¡tiempo para jugar y tiempo para descansar!"
+                ]
+            }
+        ];
+
+        let cuentoActual = 0;
+        let parteActual = 0;
+
+        function abrirCuento(indice) {
+            cuentoActual = indice;
+            parteActual = 0;
+            detenerNarrador(); // Detener cualquier narración anterior
+            mostrarParte();
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function mostrarParte() {
+            const cuento = cuentos[cuentoActual];
+            document.getElementById('emoji-cuento').textContent = cuento.emoji;
+            document.getElementById('titulo-cuento').textContent = cuento.titulo;
+            document.getElementById('contenido-cuento').innerHTML = `<p>${cuento.partes[parteActual]}</p>`;
+
+            document.getElementById('btn-anterior').disabled = parteActual === 0;
+            document.getElementById('btn-siguiente').disabled = parteActual === cuento.partes.length - 1;
+            
+            // Actualizar botón de narrador
+            document.getElementById('textoBtn').textContent = 'Escuchar Cuento';
+            document.getElementById('btnNarrador').classList.remove('reproduciendo');
+            document.getElementById('indicadorReproduccion').textContent = '';
+        }
+
+        function cuentoSiguiente() {
+            if (parteActual < cuentos[cuentoActual].partes.length - 1) {
+                parteActual++;
+                detenerNarrador();
+                mostrarParte();
+            }
+        }
+
+        function cuentoAnterior() {
+            if (parteActual > 0) {
+                parteActual--;
+                detenerNarrador();
+                mostrarParte();
+            }
+        }
+
+        function cerrarCuento() {
+            detenerNarrador();
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Variables para la narración
+        let utteranceActual = null;
+        let estaReproduciendo = false;
+
+        function toggleNarrador() {
+            if (estaReproduciendo) {
+                pausarNarrador();
+            } else {
+                iniciarNarrador();
+            }
+        }
+
+        function iniciarNarrador() {
+            const cuento = cuentos[cuentoActual];
+            const textoCompleto = cuento.partes[parteActual];
+
+            // Detener cualquier síntesis anterior
+            speechSynthesis.cancel();
+
+            utteranceActual = new SpeechSynthesisUtterance(textoCompleto);
+            
+            // Configurar voz amigable
+            utteranceActual.lang = 'es-ES';
+            utteranceActual.rate = parseFloat(document.getElementById('velocidadNarrador').value); // Velocidad seleccionada
+            utteranceActual.pitch = 1.2; // Tono un poco más alto para sonar amigable
+            utteranceActual.volume = 1; // Volumen máximo
+
+            // Eventos de la narración
+            utteranceActual.onstart = function() {
+                estaReproduciendo = true;
+                document.getElementById('btnNarrador').classList.add('reproduciendo');
+                document.getElementById('textoBtn').textContent = 'Pausar ⏸️';
+                document.getElementById('indicadorReproduccion').textContent = '🔊 Reproduciendo...';
+            };
+
+            utteranceActual.onend = function() {
+                estaReproduciendo = false;
+                document.getElementById('btnNarrador').classList.remove('reproduciendo');
+                document.getElementById('textoBtn').textContent = 'Escuchar Cuento';
+                document.getElementById('indicadorReproduccion').textContent = '✅ Narración completada';
+                setTimeout(() => {
+                    document.getElementById('indicadorReproduccion').textContent = '';
+                }, 2000);
+            };
+
+            utteranceActual.onerror = function(event) {
+                console.error('Error en la narración:', event.error);
+                document.getElementById('indicadorReproduccion').textContent = '❌ Error al reproducir';
+                estaReproduciendo = false;
+                document.getElementById('btnNarrador').classList.remove('reproduciendo');
+                document.getElementById('textoBtn').textContent = 'Escuchar Cuento';
+            };
+
+            speechSynthesis.speak(utteranceActual);
+        }
+
+        function pausarNarrador() {
+            if (speechSynthesis.paused) {
+                speechSynthesis.resume();
+                document.getElementById('textoBtn').textContent = 'Pausar ⏸️';
+                document.getElementById('indicadorReproduccion').textContent = '🔊 Reproduciendo...';
+            } else {
+                speechSynthesis.pause();
+                document.getElementById('textoBtn').textContent = 'Continuar ▶️';
+                document.getElementById('indicadorReproduccion').textContent = '⏸️ Pausado';
+            }
+        }
+
+        function detenerNarrador() {
+            speechSynthesis.cancel();
+            estaReproduciendo = false;
+            utteranceActual = null;
+            document.getElementById('btnNarrador').classList.remove('reproduciendo');
+            document.getElementById('textoBtn').textContent = 'Escuchar Cuento';
+            document.getElementById('indicadorReproduccion').textContent = '';
+        }
+
+        // Actualizar velocidad en tiempo real
+        document.getElementById('velocidadNarrador').addEventListener('input', function(e) {
+            const velocidad = parseFloat(e.target.value);
+            document.getElementById('velocidadValor').textContent = velocidad.toFixed(1) + 'x';
+            
+            // Si está reproduciéndose, reiniciar con la nueva velocidad
+            if (estaReproduciendo) {
+                const posicionActual = speechSynthesis.paused ? 'pausado' : 'reproduciendo';
+                detenerNarrador();
+                iniciarNarrador();
+            }
+        });
+
+        function volverAlMenu() {
+            window.location.href = 'index.html';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // ===== CONTROL DE MÚSICA DE FONDO =====
+        let bgAudioPausedByNarration = false;
+
+        window.addEventListener('load', function() {
+            const audioEl = document.getElementById('bgAudio');
+            const btnPlayAudio = document.getElementById('btnPlayAudio');
+
+            // Controlar play/pause del botón
+            btnPlayAudio.addEventListener('click', function() {
+                if (audioEl.paused) {
+                    audioEl.play();
+                    btnPlayAudio.textContent = '⏸';
+                } else {
+                    audioEl.pause();
+                    btnPlayAudio.textContent = '▶';
+                }
+            });
+
+            // Actualizar botón cuando la música cambie de estado
+            audioEl.addEventListener('play', function() {
+                btnPlayAudio.textContent = '⏸';
+            });
+
+            audioEl.addEventListener('pause', function() {
+                if (!bgAudioPausedByNarration) {
+                    btnPlayAudio.textContent = '▶';
+                }
+            });
+        });
+
+        // Pausar música cuando comienza la narración
+        function pausarMusicaCuandoNarracionComienza() {
+            const audioEl = document.getElementById('bgAudio');
+            if (!audioEl.paused) {
+                bgAudioPausedByNarration = true;
+                audioEl.pause();
+            }
+        }
+
+        // Reanudar música cuando termina la narración
+        function reanudarMusicaCuandoNarracionTermina() {
+            const audioEl = document.getElementById('bgAudio');
+            if (bgAudioPausedByNarration) {
+                bgAudioPausedByNarration = false;
+                audioEl.play();
+            }
+        }
+
+        // Actualizar la función iniciarNarrador para pausar música
+        const iniciarNarradorOriginal = iniciarNarrador;
+        iniciarNarrador = function() {
+            pausarMusicaCuandoNarracionComienza();
+            iniciarNarradorOriginal.call(this);
+        };
+
+        // Actualizar la función detenerNarrador para reanudar música
+        const detenerNarradorOriginal = detenerNarrador;
+        detenerNarrador = function() {
+            detenerNarradorOriginal.call(this);
+            reanudarMusicaCuandoNarracionTermina();
+        };
+    </script>
+</body>
+</html>

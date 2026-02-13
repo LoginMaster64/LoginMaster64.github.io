@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restas Fáciles</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(135deg, #FFE66D 0%, #95E1D3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .contenedor {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .encabezado {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .encabezado h1 {
+            font-size: 50px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+        }
+
+        .boton-volver {
+            background: white;
+            color: #FFE66D;
+            border: 2px solid white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .boton-volver:hover {
+            transform: scale(1.05);
+        }
+
+        .ejercicio-resta {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .ejercicio-resta h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .contenedor-objetos {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .grupo-objetos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            min-width: 150px;
+        }
+
+        .objeto {
+            font-size: 50px;
+            animation: bounce 0.6s ease-in-out infinite;
+            transition: opacity 0.3s ease;
+        }
+
+        .objeto:nth-child(2) { animation-delay: 0.1s; }
+        .objeto:nth-child(3) { animation-delay: 0.2s; }
+        .objeto:nth-child(4) { animation-delay: 0.3s; }
+        .objeto:nth-child(5) { animation-delay: 0.4s; }
+
+        .objeto.tachado {
+            opacity: 0.3;
+            text-decoration: line-through;
+            animation: none;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .simbolo-resta {
+            font-size: 40px;
+            font-weight: bold;
+            color: #FF6B6B;
+            margin: 0 15px;
+        }
+
+        .igual {
+            font-size: 40px;
+            font-weight: bold;
+            color: #9B59B6;
+            margin: 0 15px;
+        }
+
+        .opciones-respuesta {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .boton-respuesta {
+            background: linear-gradient(135deg, #A8EDEA 0%, #FED6E3 100%);
+            border: 3px solid #FFE66D;
+            padding: 15px 35px;
+            border-radius: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #333;
+            min-width: 70px;
+        }
+
+        .boton-respuesta:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .boton-respuesta.correcto {
+            background: linear-gradient(135deg, #90EE90 0%, #00C896 100%);
+            color: white;
+            animation: pulse 0.6s ease;
+        }
+
+        .boton-respuesta.incorrecto {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF4444 100%);
+            color: white;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .mensaje {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            min-height: 40px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .mensaje.correcto {
+            color: #00C896;
+        }
+
+        .mensaje.incorrecto {
+            color: #FF4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .boton-siguiente {
+            background: linear-gradient(135deg, #FFE66D 0%, #95E1D3 100%);
+            color: #333;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .boton-siguiente:hover {
+            transform: scale(1.05);
+        }
+
+        .boton-siguiente.mostrar {
+            display: block;
+        }
+
+        .puntuacion {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #FFE66D;
+            font-size: 18px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nivel {
+            display: inline-block;
+            background: #FFE66D;
+            color: #333;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .barra-superior {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #FFE66D 0%, #95E1D3 100%);
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .boton-musica {
+            background: white;
+            color: #FFE66D;
+            border: 2px solid #FFE66D;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .boton-musica:hover {
+            background: #FFE66D;
+            color: white;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio de fondo -->
+    <audio id="bgAudio" autoplay loop style="display: none;">
+        <source src="audio/Toy Shop (cute vlog _ bossa nova music) [SA9AKYvxX9s].mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="puntuacion">
+        ✅ Correctas: <span id="correctas">0</span>
+    </div>
+
+    <div class="contenedor">
+        <div class="barra-superior">
+            <button class="boton-volver" onclick="volverAlMenu()">← Volver al Menú</button>
+            <button id="btnPlayAudio" class="boton-musica">▶</button>
+        </div>
+
+        <div class="encabezado">
+            <h1>➖ Restas Fáciles ➖</h1>
+            <p>¿Cuántos objetos quedan? Haz clic en la respuesta correcta</p>
+            <div class="nivel" id="nivel">Nivel 1</div>
+        </div>
+
+        <div class="ejercicio-resta" id="ejercicio">
+            <h2 id="titulo">Resta:</h2>
+            <div class="contenedor-objetos">
+                <div class="grupo-objetos" id="grupo1"></div>
+                <div class="simbolo-resta">-</div>
+                <div class="grupo-objetos" id="grupo2"></div>
+                <div class="igual">=</div>
+                <div class="grupo-objetos" id="grupo-resultado">?</div>
+            </div>
+
+            <div class="opciones-respuesta" id="opciones"></div>
+            <div class="mensaje" id="mensaje"></div>
+            <button class="boton-siguiente" id="btnSiguiente" onclick="siguienteProblem()">Siguiente ➜</button>
+        </div>
+    </div>
+
+    <script>
+        let correctas = 0;
+        let problemasActual = 0;
+        let problemaRespondido = false;
+
+        const ejercicios = [
+            // Nivel 1: restas simples
+            { num1: 3, num2: 1, emoji: '🍎', nivel: 1 },
+            { num1: 4, num2: 1, emoji: '🍊', nivel: 1 },
+            { num1: 3, num2: 2, emoji: '🌟', nivel: 1 },
+            { num1: 5, num2: 1, emoji: '🎈', nivel: 1 },
+            { num1: 5, num2: 2, emoji: '🍌', nivel: 1 },
+            { num1: 4, num2: 2, emoji: '🌻', nivel: 1 },
+            { num1: 5, num2: 3, emoji: '🎁', nivel: 1 },
+            { num1: 6, num2: 1, emoji: '❤️', nivel: 1 },
+            { num1: 6, num2: 2, emoji: '🍎', nivel: 1 },
+            { num1: 6, num2: 3, emoji: '🍊', nivel: 1 },
+        ];
+
+        function guardarPuntuacion() {
+            const estudianteActual = localStorage.getItem('estudianteActual');
+            if (!estudianteActual) return;
+
+            const datosStr = localStorage.getItem('datosEstudiante_' + estudianteActual);
+            const datos = JSON.parse(datosStr);
+            datos.restas = correctas;
+            localStorage.setItem('datosEstudiante_' + estudianteActual, JSON.stringify(datos));
+        }
+
+        function generarOpciones(respuestaCorrecta) {
+            const opciones = [respuestaCorrecta];
+            
+            while (opciones.length < 3) {
+                let num = Math.floor(Math.random() * 10);
+                if (!opciones.includes(num)) {
+                    opciones.push(num);
+                }
+            }
+            
+            return opciones.sort(() => Math.random() - 0.5);
+        }
+
+        function mostrarEjercicio() {
+            const ejercicio = ejercicios[problemasActual % ejercicios.length];
+            const respuesta = ejercicio.num1 - ejercicio.num2;
+
+            document.getElementById('titulo').textContent = `Ejercicio ${problemasActual + 1}`;
+            document.getElementById('nivel').textContent = `Nivel ${ejercicio.nivel}`;
+
+            // Mostrar primer grupo de objetos (número inicial)
+            let html1 = '';
+            for (let i = 0; i < ejercicio.num1; i++) {
+                html1 += `<div class="objeto">${ejercicio.emoji}</div>`;
+            }
+            document.getElementById('grupo1').innerHTML = html1;
+
+            // Mostrar objetos que se restan con estilo diferente
+            let html2 = '';
+            for (let i = 0; i < ejercicio.num2; i++) {
+                html2 += `<div class="objeto tachado">${ejercicio.emoji}</div>`;
+            }
+            document.getElementById('grupo2').innerHTML = html2;
+
+            // Mostrar opciones de respuesta
+            const opciones = generarOpciones(respuesta);
+            let htmlOpciones = '';
+            opciones.forEach(opcion => {
+                htmlOpciones += `<button class="boton-respuesta" onclick="verificarRespuesta(${opcion}, ${respuesta})">
+                    ${opcion}
+                </button>`;
+            });
+            document.getElementById('opciones').innerHTML = htmlOpciones;
+
+            document.getElementById('grupo-resultado').textContent = '?';
+            document.getElementById('mensaje').textContent = '';
+            document.getElementById('btnSiguiente').classList.remove('mostrar');
+            problemaRespondido = false;
+        }
+
+        function verificarRespuesta(respuestaSeleccionada, respuestaCorrecta) {
+            if (problemaRespondido) return;
+
+            problemaRespondido = true;
+            const botones = document.querySelectorAll('.boton-respuesta');
+
+            if (respuestaSeleccionada === respuestaCorrecta) {
+                document.getElementById('mensaje').textContent = '¡¡¡ CORRECTO !!! ¡Muy bien!';
+                document.getElementById('mensaje').classList.remove('incorrecto');
+                document.getElementById('mensaje').classList.add('correcto');
+                correctas++;
+                document.getElementById('correctas').textContent = correctas;
+                guardarPuntuacion();
+
+                botones.forEach(btn => {
+                    if (parseInt(btn.textContent) === respuestaCorrecta) {
+                        btn.classList.add('correcto');
+                    }
+                    btn.disabled = true;
+                });
+
+                // Mostrar resultado en el área central
+                const ejercicio = ejercicios[problemasActual % ejercicios.length];
+                let htmlResultado = '';
+                for (let i = 0; i < respuestaCorrecta; i++) {
+                    htmlResultado += `<div class="objeto">${ejercicio.emoji}</div>`;
+                }
+                document.getElementById('grupo-resultado').innerHTML = htmlResultado;
+
+            } else {
+                document.getElementById('mensaje').textContent = '❌ Intenta de nuevo...';
+                document.getElementById('mensaje').classList.remove('correcto');
+                document.getElementById('mensaje').classList.add('incorrecto');
+
+                botones.forEach(btn => {
+                    if (parseInt(btn.textContent) === respuestaSeleccionada) {
+                        btn.classList.add('incorrecto');
+                        setTimeout(() => {
+                            btn.classList.remove('incorrecto');
+                        }, 500);
+                    }
+                });
+                problemaRespondido = false;
+                return;
+            }
+
+            document.getElementById('btnSiguiente').classList.add('mostrar');
+        }
+
+        function siguienteProblem() {
+            problemasActual++;
+            mostrarEjercicio();
+        }
+
+        function volverAlMenu() {
+            window.location.href = 'index.html';
+        }
+
+        // ===== CONTROL DE MÚSICA DE FONDO =====
+        window.addEventListener('load', function() {
+            const audioEl = document.getElementById('bgAudio');
+            const btnPlayAudio = document.getElementById('btnPlayAudio');
+
+            // Controlar play/pause del botón
+            btnPlayAudio.addEventListener('click', function() {
+                if (audioEl.paused) {
+                    audioEl.play();
+                    btnPlayAudio.textContent = '⏸';
+                } else {
+                    audioEl.pause();
+                    btnPlayAudio.textContent = '▶';
+                }
+            });
+
+            // Actualizar botón cuando la música cambie de estado
+            audioEl.addEventListener('play', function() {
+                btnPlayAudio.textContent = '⏸';
+            });
+
+            audioEl.addEventListener('pause', function() {
+                btnPlayAudio.textContent = '▶';
+            });
+        });
+
+        // Iniciar
+        mostrarEjercicio();
+    </script>
+</body>
+</html>
